@@ -1,0 +1,11 @@
+// pred if iszero 0 then (succ 0) else 0
+// if (iszero (succ 0)) then 0 else (succ (0))
+//((0))
+//succ(0)
+//if(iszero(succ 0)) then 0 else succ 0
+//succ(0)
+//pred if (iszero 0) then (succ 0) else 0
+// should get stuck for those
+//iszero(false)
+//if 0 then 0 else 0
+if true then 0 else iszero false
