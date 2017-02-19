@@ -38,15 +38,22 @@ module LAMBDA
 
   syntax Exp ::= "letrec" Id Id "=" Exp "in" Exp
                | "mu" Id "." Exp      [binder, latex(\mu{#1}.{#2})]
+               | "fix" Val
   // rule for letrec using mu
   rule letrec F:Id X = E in E' => let F = mu F . lambda X . E in E'    [macro]
   syntax Id ::= "$x" | "$y" | "$f"
+  // fix definition
+  rule fix V:Val => (lambda $f . (
+     (lambda $x . ($f (lambda $y . ($x $x $y))))
+     (lambda $x . ($f (lambda $y . ($x $x $y))))
+  )) V
   // new definition of mu through Y combinator
-  rule mu X . E
-  => (lambda $f . (
-     (lambda $x . ($f (lambda $y . ($x $x $y))))
-     (lambda $x . ($f (lambda $y . ($x $x $y))))
-  )) (lambda X . E)
+  rule mu X . E => fix (lambda X . E)
+  //rule mu X . E
+  //=> (lambda $f . (
+  //   (lambda $x . ($f (lambda $y . ($x $x $y))))
+  //   (lambda $x . ($f (lambda $y . ($x $x $y))))
+  //)) (lambda X . E)
   // original definition using substitution
   //rule mu X . E => E[(mu X . E) / X]
 endmodule

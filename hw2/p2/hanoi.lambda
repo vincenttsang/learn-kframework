@@ -1,1 +1,2 @@
-letrec f x = if x <= 1 then 1 else
+letrec f x = if x <= 1 then 1 else (2 * (f(x + -1)) + 1)
+in (f 13)
