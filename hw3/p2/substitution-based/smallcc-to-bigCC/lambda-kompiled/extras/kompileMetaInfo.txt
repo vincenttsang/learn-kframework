@@ -1,0 +1,1 @@
+{"mainSyntaxModuleName":"LAMBDA","configVarDefaultSort":{"$PGM":"K@SORT-K"},"programStartSymbol":"K@SORT-K"}

@@ -1,0 +1,1 @@
+{"mainSyntaxModuleName":"IMP-SYNTAX","configVarDefaultSort":{"$PGM":"Pgm@IMP-SYNTAX"},"programStartSymbol":"Pgm@IMP-SYNTAX"}

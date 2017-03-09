@@ -1,0 +1,16 @@
+From callcc to callCC, compiling
+[Warning] Compiler: Could not find main syntax module with name LAMBDA-SYNTAX
+in definition.  Use --syntax-module to specify one. Using LAMBDA as default.
+runnning callCC part:
+<T> <k> 15 </k> <env> .Map </env> <store> 1 |-> CC ( .Map , #freezer_+_1 ( 10 )
+) </store> </T>
+<T> <k> 7 </k> <env> .Map </env> <store> 1 |-> CC ( .Map , #freezer_+_1 ( 10 ) )
+</store> </T>
+<T> <k> 2 </k> <env> x |-> 3 f |-> 1 </env> <store> 1 |-> muclosure ( f |-> 1 ,
+lambda x . callCC lambda return . if x <= 0 then ( return 1 ) / 0 else 2 ) 2 |->
+closure ( f |-> 1 , x , callCC lambda return . if x <= 0 then ( return 1 ) / 0
+else 2 ) 3 |-> 3 4 |-> CC ( x |-> 3 f |-> 1 , ( f |-> 2 ) ~> #freezer__0 (
+  lambda a . 10 ) ~> .Map ) </store> </T>
+  <T> <k> 32 </k> <env> .Map </env> <store> 1 |-> 1 2 |-> 2 3 |-> CC ( x |-> 2 ,
+  #freezer_*_1 ( 10 ) ~> #freezer_+_1 ( 2 ) ~> ( x |-> 1 ) ~> .Map ) 4 |-> 3
+  </store> </T>

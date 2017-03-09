@@ -1,0 +1,6 @@
+From callCC to callcc, compiling
+runnning callcc part:
+<T> <k> 15 </k> <env> .Map </env> <store> 1 |-> cc ( .Map , #freezer_+_1 ( 10 ) ) </store> </T>
+<T> <k> 17 </k> <env> .Map </env> <store> 1 |-> cc ( .Map , #freezer_+_1 ( 10 ) ) </store> </T>
+<T> <k> 10 </k> <env> .Map </env> <store> 1 |-> muclosure ( f |-> 1 , lambda x . callcc lambda return . if x <= 0 then ( return 1 ) / 0 else 2 ) 2 |-> closure ( f |-> 1 , x , callcc lambda return . if x <= 0 then ( return 1 ) / 0 else 2 ) 3 |-> 3 4 |-> cc ( x |-> 3 f |-> 1 , ( f |-> 2 ) ~> #freezer__0 ( closure ( f |-> 2 , a , 10 ) ) ~> .Map ) 5 |-> 2 </store> </T>
+<T> <k> 32 </k> <env> .Map </env> <store> 1 |-> 1 2 |-> 2 3 |-> cc ( x |-> 2 , #freezer_*_1 ( 10 ) ~> #freezer_+_1 ( x ) ~> ( x |-> 1 ) ~> .Map ) 4 |-> 3 </store> </T>
