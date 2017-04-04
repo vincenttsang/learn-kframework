@@ -1,0 +1,15 @@
+int x1, x2;
+
+x1 = 1;
+x2 = 2;
+
+spawn {x1 = x1 + 1;};
+spawn {x1 = x1 + 3;};
+
+//int t1, t2;
+//t1 = spawn {y=z+2;};
+//t2 = spawn {x=++z;};
+//join(t2);
+//join(t1);
+
+print("x : ", x1, "\n");

@@ -1,0 +1,17 @@
+int x, y, t, z;
+x = 0;
+y = 0;
+z = 3;
+
+//t = x := ++z;
+x, y := ++z, z+2;
+//x, y := 1, 2;
+
+// after the parallel assignment we further modify variables to create
+// non-determinism
+z = z + 1;
+
+// print the results
+print("x : ", x, "\n");
+print("y : ", y, "\n");
+print("z : ", z, "\n");
