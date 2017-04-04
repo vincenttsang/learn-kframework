@@ -1,0 +1,19 @@
+int x;
+x=0;
+int t1; t1 = spawn {
+  atomic{
+    x=x+1;
+    if(x>1){
+      break-atomic;
+    }
+    else {
+      x=1;
+    }
+    x=x+1;
+  }
+};
+int t2;
+t2 = spawn {atomic{x=x+2;}};
+join(t1);
+join(t2);
+print(x,"\n");

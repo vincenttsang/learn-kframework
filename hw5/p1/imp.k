@@ -512,13 +512,23 @@ steps in the transition system of a program. */
   //rule <k> X := I:Int => I ... </k>
   //rule <k> X := A:AExp => !T:Int ... </k> <env> Rho </env>
   //     (.Bag => <thread>... <k> X = A; </k> <env> Rho </env> <id> !T </id> ...</thread>)
+  // the general case
   // for every AExp we parsed, generate a new thread for it
   rule <k> (X:Id, Xs:Ids => Xs) := (AE:AExp, AEs:AExps => AEs) ... </k> <env> Rho </env>
-  //    (.Bag => <thread>... <k> X = AE; </k> <env> Rho </env> <id> !T </id> ...</thread>)
+      (.Bag => <thread>... <k> X = AE; </k> <env> Rho </env> <id> !T:Int </id> ...</thread>)
+  // the two para assignment case
+  //rule <k> (X1:Id, X2:Id => !T:Int, X2) := (AE1:AExp, AE2:AExp => AE2) </k>
+  //     <env> Rho </env>
+  //rule <k> (I:Int, X2 => I) := (AE2 => !T:Int) </k>
+  //     <env> Rho </env>
+  //rule <k> I1:Int := I2:Int => I1 ... </k>
+  //     <thread>... <k>.</k> <id>I1</id> ...</thread>
+  //     <thread>... <k>.</k> <id>I2</id> ...</thread>
+
   // seems like the ids we have is evaluated to AExps, so this rule donot work
-  rule <k> (.Ids := .AExps); => . </k>
-  //
-  rule <k> .AExps := .AExps => . ...</k>
+  rule <k> .Ids := .AExps => . </k>
+
+  rule <k> .AExps := .AExps => 0 ...</k>
 
   //rule <k> spawn S => !T:Int ...</k> <env> Rho </env>
   //     (.Bag => <thread>... <k> S </k> <env> Rho </env> <id> !T </id> ...</thread>)
