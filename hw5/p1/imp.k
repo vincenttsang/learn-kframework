@@ -515,7 +515,8 @@ steps in the transition system of a program. */
   // the general case
   // for every AExp we parsed, generate a new thread for it
   rule <k> (X:Id, Xs:Ids => Xs) := (AE:AExp, AEs:AExps => AEs) ... </k> <env> Rho </env>
-      (.Bag => <thread>... <k> X = AE; </k> <env> Rho </env> <id> !T:Int </id> ...</thread>)
+      (.Bag => <thread>... <k> X = AE; </k> <env> Rho </env> <id> !T:Int </id>
+      ...</thread>) [parallel]
   // the two para assignment case
   //rule <k> (X1:Id, X2:Id => !T:Int, X2) := (AE1:AExp, AE2:AExp => AE2) </k>
   //     <env> Rho </env>

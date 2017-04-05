@@ -50,26 +50,18 @@ module IMP
                     </thread>
                   </threads>
                   <store color="red"> .Map["Atomic" <- -1] </store>
-                  <semaphore> .Map[0 <- -1] </semaphore>
-                  <backup> .Map </backup>
+                  <jiang> .Map[0 <- -1] </jiang>
                   <in color="magenta" stream="stdin"> .List </in>
                   <out color="Orchid" stream="stdout"> .List </out>
                 </T>
 // Atomic rules
-// every time we wanna execute a thread, we check if there is an atomic
-// operation undergoing
   rule <thread>...
         <k> S => hold; ~> S ...</k>
         <id> T </id>
         ...
        </thread>
        <store>... "Atomic" |-> A ...</store>
-       <semaphore>... T |-> (J => A) ...</semaphore>
-       // if current atomic operation is caused by thread A
-       // A (atomic) is not the current thread
-       // J (last atomic operation that hold the current thread) is not the same
-       // as the current atomic thread
-       // A (atomic) is not -1 (-1 means no thread is atomic)
+       <jiang>... T |-> (J => A) ...</jiang>
        requires (A =/=Int T) andBool (J =/=Int A) andBool (A =/=Int -1)
 
 // AExp
@@ -115,21 +107,18 @@ module IMP
        <out>... .List => ListItem(P) </out>  [print]
   rule print(.AExps); => .  [structural]
 
-  // rule for resolving on hold status
   rule <thread>...
         <k> hold; => . ...</k>
         <id> T </id>
         ...
        </thread>
        <store>... "Atomic" |-> A ...</store>
-       <semaphore>... T |-> J ...</semaphore>
-       requires (A ==Int -1)
+       <jiang>... T |-> J ...</jiang>
+       requires (J =/=Int A)
 
-  // when we open a new thread we add a new Tid |-> -1 pair, which means thread
-  // Tid is not waiting for anyone
   rule <k> spawn S => !T:Int ...</k>
        <env> Rho </env>
-       <semaphore>... .Map => !T |-> -1 ...</semaphore>
+       <jiang>... .Map => !T |-> -1 ...</jiang>
        (.Bag => <thread>... <k> S </k> <env> Rho </env> <id> !T </id> ...</thread>) [spawn]
   rule <k> join(T:Int); => . ...</k>
        <thread>... <k> . </k> <id> T </id> ...</thread>
@@ -137,11 +126,11 @@ module IMP
   rule <k> atomic S => !T:Int ...</k>
        <env> Rho </env>
        <store> Store => Store["Atomic" <- !T] </store>
-       <backup>... .Map => "Backup" |-> Store ...</backup>
+       <jiang>... .Map => "OldStore" |-> Store ...</jiang>
        (.Bag => <thread>... <k> S ~> exit-atomic; </k> <env> Rho </env> <id> !T </id> ...</thread>) [transition]
 
   rule <k> break-atomic; ~> _ => . </k>
-       <backup>... "Backup" |-> O ...</backup>
+       <jiang>... "OldStore" |-> O ...</jiang>
        <store> _ => O </store>
 
   rule <k> exit-atomic; => . ...</k>

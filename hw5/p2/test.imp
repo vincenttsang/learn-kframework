@@ -1,0 +1,32 @@
+//int x;
+//spawn {y = 3;};
+//atomic {x = 1; x = 2;};
+//x = 3;
+//atomic {y = 3;};
+//print("x:", x, "\n");
+
+int x, y;
+
+spawn {
+  x = 15;
+};
+
+spawn {
+  if (x<=10) {
+    x = 8;
+  } else {
+    x=4;
+  }
+};
+
+atomic{
+  int n , sum ;
+  n = 3 ;
+  sum = 0 ;
+  while ( ! ( n <= 0 ) ) {
+    sum = sum + n ;
+    n = n + -1 ;
+  }
+};
+
+y = 200;
