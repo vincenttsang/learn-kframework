@@ -146,6 +146,8 @@ the increment). */
                | Exp "||" Exp            [strict(1), left]
                > "spawn" Block
                > Exp "=" Exp             [strict(2), right]
+               // yukun: empty exp that does nothing
+               | "nop"
 
 /*@ We also need comma-separated lists of identifiers and of expressions.
 Moreover, we want them to be strict, that is, to evaluate to lists of results
@@ -796,8 +798,9 @@ semantics, which would also involve the \textsf{control} cell. */
   //     <env> Env => Env[X <- L] </env>
   //     <store>... .Map => L |-> undefined ...</store>
   //     <nextLoc> L => L +Int 1 </nextLoc>
-  rule while (E) S => if (E) {S while(E)S}  [structural]
-  //rule while (E) S => for(; E; ) {S}
+  //rule while (E) S => if (E) {S while(E)S}  [structural]
+  rule <k> nop => 1 ...</k>
+  rule while (E) S => for({} E; nop) {S}
   // yukun: new rule using control cell
   // rewrite for loop to start initialization and loop condition check
   // save current environment, loop block, step, condition to loopstack
