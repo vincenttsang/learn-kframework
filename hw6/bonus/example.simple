@@ -1,0 +1,20 @@
+secret x;
+
+int factorial(int y) {
+    print("Factorial of ", y, " is: ");
+    int t = 1;
+    for(int i = 1; i <= y; ++i) {
+      t = t * i;
+    }
+    return t;
+}
+
+void main() {
+   print("Enter a large secret number: ");
+   int x = read();
+   print("Input a natural number: ");
+   int y = read();
+   int z = factorial(y);
+   if(x > z){z = z + x;}
+   print(z);
+}

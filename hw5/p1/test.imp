@@ -1,10 +1,7 @@
-int x1, x2;
+int x1, x2, x3;
+x3 = 1;
 
-x1 = 1;
-x2 = 2;
-
-spawn {x1 = x1 + 1;};
-spawn {x1 = x1 + 3;};
+x1, x2 := ++ x3, x3 + 2;
 
 //int t1, t2;
 //t1 = spawn {y=z+2;};
@@ -12,4 +9,5 @@ spawn {x1 = x1 + 3;};
 //join(t2);
 //join(t1);
 
-print("x : ", x1, "\n");
+print("x1 : ", x1, "\n");
+print("x2 : ", x2, "\n");
