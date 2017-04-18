@@ -795,18 +795,30 @@ semantics, which would also involve the \textsf{control} cell. */
   //     <nextLoc> L => L +Int 1 </nextLoc>
   rule while (E) S => if (E) {S while(E)S}  [structural]
   // yukun: new rule using control cell
-  rule <k> (for(Start Cond; Step) {S} => Start ~> checkLoop;) ~> K</k>
+  rule <k> (for(Start Cond; Step) {S} => Start ~> checkLoop;) ~> (K => .) </k>
        <control>
          ...
          <loopstack> Map => Map["cond" <- Cond]["step" <- Step]["s" <- S]["k" <-
-         K] </loopstack>
+         K]["loop" <- 1]["env" <- Env] </loopstack>
+         <env> Env </env>
        </control>
+  rule <k> continue; ~> _ => </k>
+       <control>
 
+       </control>
+       requires ()
   rule <k> checkLoop; ~> _ => if(Cond) {S Step; checkLoop;} ~> K </k>
        <control>
          ...
          <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K ...</loopstack>
        </control>
+  rule <k> . => K </k>
+       <control>
+         ...
+         <loopstack>... "k" |-> K "loop" |-> (F => 0) "env" |-> Env</loopstack>
+       </control>
+       <env> _ => Env </env>
+       requires (F==1)
 
   //rule <k> (checkLoop; => .) ~> K </k>
   //     <control>
