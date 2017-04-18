@@ -194,7 +194,10 @@ arguments. */
                 | "acquire" Exp ";"                     [strict]
                 | "release" Exp ";"                     [strict]
                 | "rendezvous" Exp ";"                  [strict]
+                // yukun: syntax definition for new loop
                 | "checkLoop" ";"
+                | "continue" ";"
+                | "break" ";"
 
 /*@ The reason we allow $\it Stmts$ as the first argument of \texttt{for}
 instead of $\it Stmt$ is because we want to allow more than one statement
@@ -802,23 +805,34 @@ semantics, which would also involve the \textsf{control} cell. */
          K]["loop" <- 1]["env" <- Env] </loopstack>
          <env> Env </env>
        </control>
-  rule <k> continue; ~> _ => </k>
-       <control>
 
+  rule <k> continue; ~> _ => Step; checkLoop;</k>
+       <control>
+         ...
+         <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K
+         "loop" |-> F ...</loopstack>
        </control>
-       requires ()
+
+  rule <k> break; ~> _ => K </k>
+       <control>
+         ...
+         <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K
+         "loop" |-> F ...</loopstack>
+       </control>
+
   rule <k> checkLoop; ~> _ => if(Cond) {S Step; checkLoop;} ~> K </k>
        <control>
          ...
          <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K ...</loopstack>
        </control>
-  rule <k> . => K </k>
-       <control>
-         ...
-         <loopstack>... "k" |-> K "loop" |-> (F => 0) "env" |-> Env</loopstack>
-       </control>
-       <env> _ => Env </env>
-       requires (F==1)
+
+  //rule <k> . => K </k>
+  //     <control>
+  //       ...
+  //       <loopstack>... "k" |-> K "loop" |-> (F => 0) "env" |-> Env</loopstack>
+  //     </control>
+  //     <env> _ => Env </env>
+  //     requires (F==1)
 
   //rule <k> (checkLoop; => .) ~> K </k>
   //     <control>
