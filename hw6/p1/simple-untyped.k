@@ -797,33 +797,42 @@ semantics, which would also involve the \textsf{control} cell. */
   //     <store>... .Map => L |-> undefined ...</store>
   //     <nextLoc> L => L +Int 1 </nextLoc>
   rule while (E) S => if (E) {S while(E)S}  [structural]
+  //rule while (E) S => for(; E; ) {S}
   // yukun: new rule using control cell
+  // rewrite for loop to start initialization and loop condition check
+  // save current environment, loop block, step, condition to loopstack
+  // set loop flag to 1
   rule <k> (for(Start Cond; Step) {S} => Start ~> checkLoop;) ~> (K => .) </k>
        <control>
          ...
          <loopstack> Map => Map["cond" <- Cond]["step" <- Step]["s" <- S]["k" <-
          K]["loop" <- 1]["env" <- Env] </loopstack>
-         <env> Env </env>
        </control>
-
+       <env> Env </env>
+  // continue rule is as simple as to eradicate all contents behind it and do
+  // a step and then run into another loop check
   rule <k> continue; ~> _ => Step; checkLoop;</k>
        <control>
          ...
          <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K
          "loop" |-> F ...</loopstack>
        </control>
-
+  // besides ignoring all contents behind break, we also need to restore the
+  // rest of the program, namely K, which is saved in loopstack
+  // we also have to restore the environment for program continuation
   rule <k> break; ~> _ => K </k>
        <control>
          ...
          <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K
-         "loop" |-> F ...</loopstack>
+         "loop" |-> F "env" |-> Env ...</loopstack>
        </control>
+       <env> _ => Env </env>
 
-  rule <k> checkLoop; ~> _ => if(Cond) {S Step; checkLoop;} ~> K </k>
+  rule <k> checkLoop; ~> _ => if(Cond) {S Step; checkLoop;} ~> env(Env) ~> K </k>
        <control>
          ...
-         <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K ...</loopstack>
+         <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K
+         "loop" |-> F "env" |-> Env ...</loopstack>
        </control>
 
   //rule <k> . => K </k>
