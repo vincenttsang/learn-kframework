@@ -194,7 +194,6 @@ arguments. */
                 | "acquire" Exp ";"                     [strict]
                 | "release" Exp ";"                     [strict]
                 | "rendezvous" Exp ";"                  [strict]
-                | "checkLoop" ";"
 
 /*@ The reason we allow $\it Stmts$ as the first argument of \texttt{for}
 instead of $\it Stmt$ is because we want to allow more than one statement
@@ -225,10 +224,8 @@ derived ones before we start the semantics.  All desugaring macros below are
 straightforward. */
 
   rule if (E) S => if (E) S else {}                                 [macro]
-
-  // yukun: original rules
-  //rule for(Start Cond; Step) {S} => {Start while (Cond) {S Step;}}  [macro]
-  //rule for(Start Cond; Step) {} => {Start while (Cond) {Step;}}     [macro]
+  rule for(Start Cond; Step) {S} => {Start while (Cond) {S Step;}}  [macro]
+  rule for(Start Cond; Step) {} => {Start while (Cond) {Step;}}     [macro]
   rule var E1:Exp, E2:Exp, Es:Exps; => var E1; var E2, Es;          [macro]
   rule var X:Id = E; => var X; X = E;                               [macro]
 
@@ -337,7 +334,6 @@ to the \K tool, as indicated by the \textit{\$PGM} variable, followed by the
                       <control color="cyan">
                         <fstack color="blue"> .List </fstack>
                         <xstack color="purple"> .List </xstack>
-                        <loopstack color="blue"> .Map </loopstack>
                       </control>
                     //<br/> // TODO(KORE): support latex annotations #1799
                       <env color="violet"> .Map </env>
@@ -787,55 +783,48 @@ below works because our while loops in SIMPLE are indeed very basic.  If we
 allowed break/continue of loops then we would need a completely different
 semantics, which would also involve the \textsf{control} cell. */
 
-                //| "for" "(" Stmts Exp ";" Exp ")" Block
-  // example for usage of Map
-  //rule <k> var X:Id; => . ...</k>
-  //     <env> Env => Env[X <- L] </env>
-  //     <store>... .Map => L |-> undefined ...</store>
-  //     <nextLoc> L => L +Int 1 </nextLoc>
   rule while (E) S => if (E) {S while(E)S}  [structural]
-  // yukun: new rule using control cell
-  rule <k> (for(Start Cond; Step) {S} => Start ~> checkLoop;) ~> K</k>
-       <control>
-         ...
-         <loopstack> Map => Map["cond" <- Cond]["step" <- Step]["s" <- S]["k" <-
-         K] </loopstack>
-       </control>
 
-  rule <k> checkLoop; ~> _ => if(Cond) {S Step; checkLoop;} ~> K </k>
-       <control>
-         ...
-         <loopstack>... "cond" |-> Cond "step" |-> Step "s" |-> S "k" |-> K ...</loopstack>
-       </control>
-
-  //rule <k> (checkLoop; => .) ~> K </k>
-  //     <control>
-  //       ...
-  //       <loopstack>... "cond" |-> Cond ...</loopstack>
-  //     </control>
-  //     requires (Cond==true)
-
-  // yukun: rule checkLoop to check if we have more for loops
-  //rule <k> checkLoop; => . </k>
-  //     <control>
-  //       <loopstack> ListItem((Cond, Step, S)) </loopstack>
-  //     </control>
-  //     requires (Cond==true)
-  //rule <k> checkLoop; => S ~> Step ~> checkLoop; </k>
-  //     <control>
-  //       <loopstack> ListItem((Cond, Step, S)) </loopstack>
-  //     </control>
-  //     requires notBool(Cond)
+/*@ \subsection{Print}
+The \texttt{print} statement was strict, so all its arguments are now
+evaluated (recall that \texttt{print} is variadic).  We append each of
+its evaluated arguments to the output buffer, and discard the residual
+\texttt{print} statement with an empty list of arguments. */
 
   rule <k> print(V:Val, Es => Es); ...</k> <out>... .List => ListItem(V) </out>
     [print]
   rule print(.Vals); => .  [structural]
 
+/*@ \subsection{Exceptions}
+SIMPLE allows parametric exceptions, in that one can throw and catch a
+particular value.  The statement ``\texttt{try $S_1$ catch($X$) $S_2$}''
+proceeds with the evaluation of $S_1$.  If $S_1$ evaluates normally, i.e.,
+without any exception thrown, then $S_2$ is discarded and the execution
+continues normally.  If $S_1$ throws an exception with a statement of the
+form ``\texttt{throw $E$}'', then $E$ is first evaluated to some value $V$
+(\texttt{throw} was declared to be strict), then $V$ is bound to $X$, then
+$S_2$ is evaluated in the new environment while the reminder of $S_1$ is
+discarded, then the environment is recovered and the execution continues
+normally with the statement following the ``\texttt{try $S_1$ catch($X$)
+$S_2$}'' statement.  Exceptions can be nested and the statements in the
+``\texttt{catch}'' part ($S_2$ in our case) can throw exceptions to the
+upper level.  One should be careful with how one handles the control data
+structures here, so that the abrupt changes of control due to exception
+throwing and to function returns interact correctly with each other.
+For example, we want to allow function calls inside the statement $S_1$ in
+a ``\texttt{try $S_1$ catch($X$) $S_2$}'' block which can throw an exception
+that is not caught by the function but instead is propagated to the
+``\texttt{try $S_1$ catch($X$) $S_2$}'' block that called the function.
+Therefore, we have to make sure that the function stack as well as other
+potential control structures are also properly modified when the exception
+is thrown to correctly recover the execution context.  This can be easily
+achieved by pushing/popping the entire current control context onto the
+exception stack.  The three rules below modularly do precisely the above. */
+
   syntax KItem ::= (Id,Stmts,K,Map,ControlCellFragment)
 
   syntax KItem ::= "popx"
 
-                //| "try" Block "catch" "(" Id ")" Block
   rule <k> (try S1 catch(X) {S2} => S1 ~> popx) ~> K </k>
        <control>
          <xstack> .List => ListItem((X, S2, K, Env, C)) ...</xstack>
