@@ -830,7 +830,11 @@ semantics, which would also involve the \textsf{control} cell. */
          "loop" |-> F "env" |-> Env ...</loopstack>
        </control>
        <env> _ => Env </env>
-
+  // checkLoop syntax checks if we should add another repetition for the loop,
+  // it simply ignores all things behind it (but keep in mind that the following
+  // program context has already been stored in loopstack). if the condition no
+  // longer holds, the loop will be terminated, environment will be recovered
+  // and the rest of program will be appended again
   rule <k> checkLoop; ~> _ => if(Cond) {S Step; checkLoop;} ~> env(Env) ~> K </k>
        <control>
          ...

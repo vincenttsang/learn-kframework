@@ -1,0 +1,9 @@
+Directory Architecture:
+./test.simple             the most simple test case for testing the difference
+between using secret variable in computation and without it
+./example.simple          the test case provided by the professor
+./original.k              original language definition
+./simple-typed-dynamic.k  modified language definition than supports secret
+variable
+
+All Test Cases Passed

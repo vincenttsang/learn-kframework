@@ -1,0 +1,48 @@
+yzeng@VZENG-THINK:~/workspace/learn-kframework/hw6/p2$ krun tests/ex06.simple
+0
+1
+2
+3
+4
+5
+6
+7
+8
+11
+Done
+<T> <threads> .ThreadCellBag </threads> <genv> x |-> 0 inc |-> 1 main |-> 2 </genv> <store> 0 |-> 11 1 |-> lambda ( int , ( bool b ) , .Exps , { print ( ( ++ x ) , ( "\n" , .Exps ) ) ; return 1 ; } ) 2 |-> lambda ( void , .Exps , { ( try { try { { ( int ( i , .Exps ) ; ( ( i = 0 ) ; ) ) while ( i <= 10 ) { ( print ( i , ( "\n" , .Exps ) ) ; if ( i > 7 ) { try { throw inc ; } catch ( ( ( void , .Exps ) -> int ) f ) { print ( "Wrong\n" , .Exps ) ; } } else { } ) ( ( ++ i ) ; ) } } } catch ( ( ( bool , .Exps ) -> void ) f ) { print ( "Wrong\n" , .Exps ) ; } } catch ( ( ( bool , .Exps ) -> int ) f ) { f ( true , .Exps ) ; } ) print ( "Done\n" , .Exps ) ; } ) 3 |-> 8 4 |-> lambda ( int , ( bool b ) , .Exps , { print ( ( ++ x ) , ( "\n" , .Exps ) ) ; return 1 ; } ) 5 |-> true </store> <busy> .Set </busy> <terminated> SetItem ( 0 ) </terminated> <in> ListItem ( #buffer ( "" ) ) ListItem ( "on" ) ListItem ( #istream ( 0 ) ) </in> <out> ListItem ( #ostream ( 1 ) ) ListItem ( "on" ) ListItem ( #buffer ( "" ) ) </out> <nextLoc> 6 </nextLoc> </T>
+yzeng@VZENG-THINK:~/workspace/learn-kframework/hw6/p2$ krun tests/ex07.simple
+0
+1
+2
+3
+4
+5
+6
+7
+8
+11
+OK
+Done
+<T> <threads> .ThreadCellBag </threads> <genv> x |-> 0 inc |-> 1 main |-> 2 </genv> <store> 0 |-> 11 1 |-> lambda ( int , ( bool b ) , .Exps , { print ( ( ++ x ) , ( "\n" , .Exps ) ) ; throw -1 ; return 1 ; } ) 2 |-> lambda ( void , .Exps , { ( try { try { { ( int ( i , .Exps ) ; ( ( i = 0 ) ; ) ) while ( i <= 10 ) { ( print ( i , ( "\n" , .Exps ) ) ; if ( i > 7 ) { try { inc ( true , .Exps ) ; } catch ( ( ( void , .Exps ) -> int ) f ) { print ( "Wrong\n" , .Exps ) ; } } else { } ) ( ( ++ i ) ; ) } } } catch ( ( ( bool , .Exps ) -> void ) f ) { print ( "Wrong\n" , .Exps ) ; } } catch ( int f ) { print ( "OK\n" , .Exps ) ; } ) print ( "Done\n" , .Exps ) ; } ) 3 |-> 8 4 |-> true 5 |-> -1 </store> <busy> .Set </busy> <terminated> SetItem ( 0 ) </terminated> <in> ListItem ( #buffer ( "" ) ) ListItem ( "on" ) ListItem ( #istream ( 0 ) ) </in> <out> ListItem ( #ostream ( 1 ) ) ListItem ( "on" ) ListItem ( #buffer ( "" ) ) </out> <nextLoc> 6 </nextLoc> </T>
+yzeng@VZENG-THINK:~/workspace/learn-kframework/hw6/p2$ krun tests/ex08.simple
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+OK
+Done
+<T> <threads> .ThreadCellBag </threads> <genv> main |-> 1 f |-> 0 </genv> <store> 1 |-> lambda ( void , .Exps , { ( try { f ( 1 , .Exps ) ; } catch ( int x ) { print ( "OK\n" , .Exps ) ; } ) print ( "Done\n" , .Exps ) ; } ) 0 |-> lambda ( void , ( int x ) , .Exps , { ( try { print ( x , ( "\n" , .Exps ) ) ; if ( x >= 10 ) { throw -1 ; } else { f ( ( x + 1 ) , .Exps ) ; } } catch ( bool b ) { print ( "Wrong\n" , .Exps ) ; } ) print ( "Wrong\n" , .Exps ) ; } ) 2 |-> 1 3 |-> 2 4 |-> 3 5 |-> 4 6 |-> 5 7 |-> 6 8 |-> 7 9 |-> 8 10 |-> 9 11 |-> 10 12 |-> -1 </store> <busy> .Set </busy> <terminated> SetItem ( 0 ) </terminated> <in> ListItem ( #buffer ( "" ) ) ListItem ( "on" ) ListItem ( #istream ( 0 ) ) </in> <out> ListItem ( #ostream ( 1 ) ) ListItem ( "on" ) ListItem ( #buffer ( "" ) ) </out> <nextLoc> 13 </nextLoc> </T>
+yzeng@VZENG-THINK:~/workspace/learn-kframework/hw6/p2$ krun tests/ex09.simple
+1
+2
+3
+OK
+Done
+<T> <threads> .ThreadCellBag </threads> <genv> g |-> 1 main |-> 2 f |-> 0 </genv> <store> 1 |-> lambda ( void , ( int x ) , .Exps , { ( try { f ( x , .Exps ) ; } catch ( string s ) { print ( "Wrong\n" , .Exps ) ; } ) print ( "Wrong\n" , .Exps ) ; } ) 0 |-> lambda ( void , ( int x ) , .Exps , { ( try { print ( x , ( "\n" , .Exps ) ) ; if ( x >= 3 ) { throw -1 ; } else { g ( ( x + 1 ) , .Exps ) ; } } catch ( bool b ) { print ( "Wrong\n" , .Exps ) ; } ) print ( "Wrong\n" , .Exps ) ; } ) 2 |-> lambda ( void , .Exps , { ( try { f ( 1 , .Exps ) ; } catch ( int x ) { print ( "OK\n" , .Exps ) ; } ) print ( "Done\n" , .Exps ) ; } ) 3 |-> 1 4 |-> 2 5 |-> 2 6 |-> 3 7 |-> 3 8 |-> -1 </store> <busy> .Set </busy> <terminated> SetItem ( 0 ) </terminated> <in> ListItem ( #buffer ( "" ) ) ListItem ( "on" ) ListItem ( #istream ( 0 ) ) </in> <out> ListItem ( #ostream ( 1 ) ) ListItem ( "on" ) ListItem ( #buffer ( "" ) ) </out> <nextLoc> 9 </nextLoc> </T>

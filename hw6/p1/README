@@ -1,0 +1,25 @@
+Directory architecture:
+./for-test.k    naive self-defined test case for “for” loop
+./while-test.k  naive self-defined test case for while loop
+./original.k    original syntax and rule definition for untyped simple language
+./simple-untyped.k  modified untyped simple language for break and continue
+functions
+./tests/        directory for all test cases provided in Github
+
+Test Cases Passed:
+./
+for-test.k                              PASS
+while-test.k                            PASS
+
+tests/
+break-from-exception.simple             FAIL
+break-from-function.simple              FAIL
+collatz-continue.simple                 PASS
+factorial-continue.simple               PASS
+for-with-break.simple                   PASS
+for-with-continue.simple                PASS
+nested-loops.simple                     FAIL
+while-with-break-and-continue.simple    PASS
+while-with-break.simple                 PASS
+while-with-continue.simple              PASS
+while-with-locals.simple                PASS

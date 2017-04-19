@@ -1,0 +1,17 @@
+Directory Architecture:
+./simple-typed-dynamic.k    new language definition for supporting the advanced
+try catch functionality
+./tests/                    this directory contains all test cases in Github
+./log                       the file contains the runtime result of our new
+language for test cases after ex06.k
+
+Test Cases Passed:
+ex01.simple       PASS
+ex02.simple       PASS
+ex03.simple       PASS
+ex04.simple       PASS
+ex05.simple       PASS
+ex06.simple       PASS
+ex07.simple       PASS
+ex08.simple       PASS
+ex09.simple       PASS
