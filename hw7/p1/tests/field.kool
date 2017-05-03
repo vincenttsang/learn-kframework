@@ -1,8 +1,8 @@
 // Testing field initialization and access.
 
 class Main {
-  var a=3;
-  method Main() {
+  int a=3;
+  void Main() {
     print("a = ", a, "\n");
   }
 }

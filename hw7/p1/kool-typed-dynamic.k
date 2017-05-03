@@ -781,11 +781,22 @@ The method lookup is the same as in untyped KOOL.  */
        <crntClass> Class </crntClass>
        <envStack>... ListItem((Class,_)) EStack </envStack>
     [structural]*/
+  // yukun: rule for super
   rule <k> (super . X
             => lookupMember(EStack,X))(_:Exps)...</k>
        <crntClass> Class:Id </crntClass>
        <envStack> ListItem(envStackFrame(Class,_)) EStack </envStack>
+       <mInvokCount> IC => IC[lookupMember(EStack,X).X <- 1] </mInvokCount>
+       requires notBool(lookupMember(EStack,X).X in keys(IC))
     [structural]
+  rule <k> (super . X
+            => lookupMember(EStack,X))(_:Exps)...</k>
+       <crntClass> Class:Id </crntClass>
+       <envStack> ListItem(envStackFrame(Class,_)) EStack </envStack>
+       <mInvokCount>... lookupMember(EStack,X).X |-> (IC => IC +Int 1) ...
+       </mInvokCount>
+    [structural]
+
   rule <k> (super . X)(_:Exps)...</k>
        <crntClass> Class:Id </crntClass>
        <envStack> (ListItem(envStackFrame(Class':Id,_)) => .List) EStack </envStack>

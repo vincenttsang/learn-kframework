@@ -1,30 +1,34 @@
 // Building and traversing a tree.
-// Testing the difference between this.val and val.
 
-class Node {
-  var left, right;
-  method Node(left,right) {
+class Summable {      // Class Summable is not needed in dynamically typed KOOL
+  void Summable() {}  // Needed in statically typed KOOL; moreover, it needs
+  int sum() {}        // to be consistently typed in extensions.
+}
+
+class Node extends Summable {
+  Summable left, right;
+  void Node(Summable left, Summable right) {
     this.left = left;
     this.right = right;
   }
-  method sum() {
+  int sum() {
     return (left.sum() + right.sum());
   }
 }
 
-class Leaf {
-  var val;
-  method Leaf(val) {
+class Leaf extends Summable {
+  int val;
+  void Leaf(int val) {
     this.val = val;
   }
-  method sum() {
+  int sum() {
     return val;
   }
 }
 
 class Main {
-  method Main() {
-    var o;
+  void Main() {
+    Node o;
     o = new Node(new Node(new Leaf(3), new Leaf(4)), new Leaf(5));
     print(o.sum(), "\n");
   }

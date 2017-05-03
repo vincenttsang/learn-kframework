@@ -1,45 +1,44 @@
-// This tests throwing and catching objects.  This is, in fact, how exceptions
-// are expected to be handled in object-oriented languages.
-
 class Exception {
-  var v;
-  method Exception(v) {
+  int v;
+  void Exception(int v) {
     print("Exception ", v, " thrown!\n");
     this.v = v;
   }
-  method get() {
+  int get() {
     return v;
   }
 }
 
 class Exception2 extends Exception {
-  method Exception2(v) {
-    Exception(v);
+  void Exception2(int v) {
+    (Exception(v));  // Parentheses tell the parser this is not a type decl.
+                     // Alternatively, use super.Exception or this.Exception.
+                     // This is an artifact of our "too generous" grammar,
+                     // allowing declarations like "int (v);". Java doesn't.
   }
 }
 
 class Main {
 
-  method foo() {
+  void foo() {
     try {
       throw new Exception(5);
-      print(17);                          // should not be printed
-    } catch(e) {                          // "Exception2 e" in typed KOOL 
-      throw new Exception2(e.get() + 2);  // unreachable in typed KOOl!
+      print(17);                           // should not be printed
+    } catch(Exception2 e) {
+      throw new Exception2(e.get() + 2);   // should not be reached
     }
-    throw new Exception(-1);              // should not be reached
+    throw new Exception(-1);               // should not be reached
   }
 
-  method Main() {
+
+  void Main() {
     try {
       foo();
-    } catch(e) {
-        print(e.get(),"\n");              // should print 7 (5 in typed KOOL)
+    } catch(Exception e) {
+        print(e.get(),"\n");                 // should print 5
     }
   }
 
 }
 
-// Exception 5 thrown!
-// Exception 7 thrown!
-// 7
+// 5
