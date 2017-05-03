@@ -26,14 +26,16 @@ module IMP-SYNTAX
                  | "print" "(" AExps ")" ";"
                  | "halt" ";"
                  > "join" AExp ";"            [strict]
-                 | "hold" ";"
-                 | "break-atomic" ";"
-                 | "atomic-end" ";"
+                 | "hold" ";"      [strict]
+                 > "break-atomic" ";"
+                 > "exit-atomic" ";"
+                 > "continue" ";"
 
   syntax Ids   ::= List{Id,","}
   syntax AExps ::= List{AExp,","}
   syntax Stmts ::= List{Stmt,""}
 endmodule
+
 
 module IMP
   imports IMP-SYNTAX
@@ -47,13 +49,9 @@ module IMP
                       <id color="black"> 0 </id>
                     </thread>
                   </threads>
-
-                  // Initialize Atomic to -1 to indicate there's no atomic thread
-                  // at the beginning
                   <store color="red"> .Map["Atomic" <- -1] </store>
-
-                  // The main thread (with ID 0)
-                  <lookup> .Map[0 <- -1] </lookup>
+                  <semaphore> .Map[0 <- -1] </semaphore>
+                  <backup> .Map </backup>
                   <in color="magenta" stream="stdin"> .List </in>
                   <out color="Orchid" stream="stdout"> .List </out>
                 </T>
@@ -73,6 +71,14 @@ module IMP
        // as the current atomic thread
        // A (atomic) is not -1 (-1 means no thread is atomic)
        requires (A =/=Int T) andBool (J =/=Int A) andBool (A =/=Int -1)
+  //rule <thread>...
+  //      <k> S => hold; ~> S ...</k>
+  //      <id> T </id>
+  //      ...
+  //     </thread>
+  //     <store>... "Atomic" |-> A ...</store>
+  //     <semaphore>... T |-> (J => A) ...</semaphore>
+  //     requires (A =/=Int T) andBool (J =/=Int A) andBool (A =/=Int -1)
 
 // AExp
   rule <k> X:Id => I ...</k>
@@ -117,20 +123,21 @@ module IMP
        <out>... .List => ListItem(P) </out>  [print]
   rule print(.AExps); => .  [structural]
 
+  // rule for resolving on hold status
   rule <thread>...
         <k> hold; => . ...</k>
         <id> T </id>
         ...
        </thread>
        <store>... "Atomic" |-> A ...</store>
-       <lookup>... T |-> J ...</lookup>
+       <semaphore>... T |-> J ...</semaphore>
        requires (A ==Int -1)
 
   // when we open a new thread we add a new Tid |-> -1 pair, which means thread
   // Tid is not waiting for anyone
   rule <k> spawn S => !T:Int ...</k>
        <env> Rho </env>
-       <lookup>... .Map => !T |-> -1 ...</lookup>
+       <semaphore>... .Map => !T |-> -1 ...</semaphore>
        (.Bag => <thread>... <k> S </k> <env> Rho </env> <id> !T </id> ...</thread>) [spawn]
   rule <k> join(T:Int); => . ...</k>
        <thread>... <k> . </k> <id> T </id> ...</thread>
@@ -138,19 +145,15 @@ module IMP
   rule <k> atomic S => !T:Int ...</k>
        <env> Rho </env>
        <store> Store => Store["Atomic" <- !T] </store>
-       <lookup> Lookup => Lookup["SavedStore" <- Store] </lookup>
-       (.Bag => <thread>... <k> S ~> atomic-end; </k> <env> Rho </env> <id> !T </id> ...</thread>) [atomic]
+       <backup>... .Map => "Backup" |-> Store ...</backup>
+       (.Bag => <thread>... <k> S ~> exit-atomic; </k> <env> Rho </env> <id> !T </id> ...</thread>) [transition]
 
-  // When ending the atomic operation, set the Atomic flag back to -1 to indicate no
-  // atomic operation is going on anymore.
-  rule <k> atomic-end; => . ...</k>
-       <store>... "Atomic" |-> (_ => -1) ...</store>
-
-  // "break-atomic" should end the current atomic operation and restore the previous saved
-  // state.
   rule <k> break-atomic; ~> _ => . </k>
-       <lookup>... "SavedStore" |-> O ...</lookup>
+       <backup>... "Backup" |-> O ...</backup>
        <store> _ => O </store>
+
+  rule <k> exit-atomic; => . ...</k>
+       <store>... "Atomic" |-> (_ => -1) ...</store>
 
 // Stmts
   rule .Stmts => .                 [structural]

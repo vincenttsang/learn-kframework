@@ -1,0 +1,15 @@
+int x, y, z;
+z=99;
+spawn {x = 15;};
+spawn {if (x<=10) {x = 8;} else {x=4;}};
+atomic{
+int n , sum ;
+n = 100 ;
+z=n;
+break-atomic;
+print("Something is wrong if you see this message");
+sum = 0 ;
+while ( ! ( n <= 0 ) ) { sum = sum + n ; n = n + -1 ; }
+};
+y = 200;
+if(z<=99){print("Good");} else { print("Something is wrong if you see this message");}

@@ -1,0 +1,10 @@
+int x, y;
+spawn {x = 15;};
+spawn {if (x<=10) {x = 8;} else {x=4;}};
+atomic{
+int n , sum ;
+n = 100 ;
+sum = 0 ;
+while ( ! ( n <= 0 ) ) { sum = sum + n ; n = n + -1 ; }
+};
+y = 200;

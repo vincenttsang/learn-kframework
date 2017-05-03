@@ -3,10 +3,10 @@
 module IMP-SYNTAX
   syntax AExp  ::= Int | String | Id
                  | "++" Id
-                 | "read" "(" ")"             
+                 | "read" "(" ")"
                  > AExp "/" AExp              [transition, left, strict, division]
                  > AExp "+" AExp              [transition, left, strict]
-                 > "spawn" Block              
+                 > "spawn" Block
                  > Id "=" AExp                [strict(2)]
                  | "(" AExp ")"               [bracket]
   syntax BExp  ::= Bool
@@ -23,6 +23,7 @@ module IMP-SYNTAX
                  | "int" Ids ";"
                  | "print" "(" AExps ")" ";"
                  | "halt" ";"
+                 | "abort" ";"
                  > "join" AExp ";"            [strict]
 
   syntax Ids   ::= List{Id,","}
@@ -86,7 +87,7 @@ module IMP
   but future K should be able to infer that automatically. */
   syntax AExp ::= Printable
   context print(HOLE:AExp, AEs:AExps);
-  rule <k> print(P:Printable,AEs => AEs); ...</k>  
+  rule <k> print(P:Printable,AEs => AEs); ...</k>
        <out>... .List => ListItem(P) </out>  [transition]
   rule print(.AExps); => .
 
@@ -104,7 +105,7 @@ module IMP
   // verification ids
   syntax Id ::= "n"     [token]
               | "sum"   [token]
-  
+
   rule <k> S:Stmt ~> _ => . </k>
        <store> Rho </store> requires ("abortion" in keys(Rho)) [transition]
 

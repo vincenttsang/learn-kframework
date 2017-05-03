@@ -1,0 +1,20 @@
+Directory architecture:
+./kool-typed-dynamic.k  modified kool language with profiling
+./batch_test.sh     script for krun all test cases in the tests/ directory
+./tests/        directory for all test cases provided in Github
+
+Test Cases:
+./
+test.kool                       PASS
+
+tests/
+collatz.kool                    PASS
+
+hello-world.kool                PASS
+instanceOf.kool                 PASS
+
+Test Cases Cannot Be Passed Even using Original Kool Language:
+cast-2.kool                     FAIL(stuck)
+field.kool                      FAIL(stuck)
+factorial.kool                  FAIL(kompile failure)
+constructor.kool                FAIL(kompile failure)

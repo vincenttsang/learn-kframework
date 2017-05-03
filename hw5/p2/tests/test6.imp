@@ -1,7 +1,7 @@
 int x;
 x=0;
 int t1; t1 = spawn {
-  atomic{
+                 atomic{
                      x=x+1;
                      if(2<=x){
                        break-atomic;
@@ -10,9 +10,9 @@ int t1; t1 = spawn {
                        x=1;
                      }
                      x=x+1;
-                 };
+                 }
              };
-int t2; t2 = spawn {atomic{x=x+2;};};
+int t2; t2 = spawn {atomic{x=x+2;}};  
 join(t1);
 join(t2);
 print(x,"\n");

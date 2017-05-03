@@ -1,0 +1,8 @@
+factorial(0,1).
+
+factorial(N, F) :-
+// what to do when we have a wrong predicate
+  N > 0,
+
+
+?- factorial(0, R).
